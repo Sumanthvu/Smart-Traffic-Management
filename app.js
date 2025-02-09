@@ -1,21 +1,16 @@
-require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-const { spawn } = require("child_process");
 const trafficRoutes = require("./routes/trafficRoutes");
+const suspiciousActivityRoutes = require("./routes/suspiciousActivityRoutes"); 
+const connectDB = require("./database/db");
 
 const app = express();
-const PORT=5000;
+connectDB();
 
 app.use(express.json());
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+app.use("/traffic", trafficRoutes);
 
-app.use("/api/traffic", trafficRoutes);
+app.use("/suspicious-activity", suspiciousActivityRoutes); 
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
